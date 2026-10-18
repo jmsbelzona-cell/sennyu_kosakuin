@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache">
 <style>*,*::before,*::after{box-sizing:border-box}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font:14px system-ui,sans-serif}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -1975,7 +1976,7 @@ function title(){ambStop();
       <span class="sw" style="background:#0a0d1c;border:1px dashed #8ca0ff"></span><span>暗がり。立ち止まれば、すぐそばの見張り以外には見つからない</span>
       <span class="sw" style="background:#3a3324;border:1px solid #5a4d33"></span><span>障害物（木箱・コンテナ・机・岩など）。視線を遮る</span>
     </div>
-    <p style="font-size:12px;color:var(--dim)"><span id="saveLbl"></span>音楽は作戦ごとに変わります。右上の「音」で消せます。</p></div>`);
+    <p style="font-size:12px;color:var(--dim)">版　第2版（2026年10月18日）　<span id="saveLbl"></span>音楽は作戦ごとに変わります。右上の「音」で消せます。</p></div>`);
   syncSaveLbl();
   overlay.querySelectorAll(".mbtn").forEach(b=>b.onclick=()=>brief(+b.dataset.i));
   const se=$("seeEnd");if(se)se.onclick=showEnding;
