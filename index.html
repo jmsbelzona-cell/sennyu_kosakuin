@@ -28,7 +28,8 @@
   --mono:"Share Tech Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
   color-scheme:dark;
 }
-html,body{height:100%}
+html,body{height:100%;overscroll-behavior:none}
+body.touch{position:fixed;inset:0;width:100%}
 body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow:hidden;-webkit-user-select:none;user-select:none;touch-action:none;-webkit-tap-highlight-color:transparent}
 #app{height:100%;display:flex;flex-direction:column}
 
@@ -85,7 +86,7 @@ header{border-bottom:2px solid var(--stage,var(--line))}
 .legend{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:13px;color:#bdb9a4;align-items:center}
 .sw{width:14px;height:14px;display:inline-block}
 
-#pad{display:flex;justify-content:space-between;align-items:center;gap:16px;background:var(--panel);border-top:1px solid var(--line);padding-block:12px calc(12px + env(safe-area-inset-bottom,0px));padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+#pad{display:flex;justify-content:space-between;align-items:center;gap:16px;background:var(--panel);border-top:1px solid var(--line);padding-block:12px calc(30px + env(safe-area-inset-bottom,0px));padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
 #zone{flex:1;align-self:stretch;min-width:124px;min-height:132px;position:relative;touch-action:none}
 #stick{position:absolute;left:58px;top:50%;width:116px;height:116px;margin:-58px 0 0 -58px;border-radius:50%;border:1px solid var(--line);background:radial-gradient(circle,#191d15 0 40%,#10130d 41%);pointer-events:none;opacity:.55;transition:opacity .15s}
 #stick.act{opacity:1}
@@ -808,6 +809,8 @@ function stickMove(e){
   knob.style.transform=`translate(${dx}px,${dy}px)`;
   stick.x=dx/R;stick.y=dy/R;stick.m=Math.min(1,Math.hypot(stick.x,stick.y));
 }
+// iPhone では画面の下端を上に払うと閉じる操作になる。指が下端へ行かないよう、レバーは操作盤の中に収め、画面のスクロールも止める
+for(const ev of ["touchstart","touchmove"])document.addEventListener(ev,e=>{if(mode==="play"&&e.target.closest&&!e.target.closest("button")&&(e.target.closest("#pad")||e.target.closest("#stage")))e.preventDefault()},{passive:false});
 zone.addEventListener("pointerdown",e=>{
   if(stickId!==null)return;
   const r=zone.getBoundingClientRect();
@@ -1976,7 +1979,7 @@ function title(){ambStop();
       <span class="sw" style="background:#0a0d1c;border:1px dashed #8ca0ff"></span><span>暗がり。立ち止まれば、すぐそばの見張り以外には見つからない</span>
       <span class="sw" style="background:#3a3324;border:1px solid #5a4d33"></span><span>障害物（木箱・コンテナ・机・岩など）。視線を遮る</span>
     </div>
-    <p style="font-size:12px;color:var(--dim)">版　第2版（2026年10月18日）　<span id="saveLbl"></span>音楽は作戦ごとに変わります。右上の「音」で消せます。</p></div>`);
+    <p style="font-size:12px;color:var(--dim)">版　第3版（2026年10月19日）　<span id="saveLbl"></span>音楽は作戦ごとに変わります。右上の「音」で消せます。</p></div>`);
   syncSaveLbl();
   overlay.querySelectorAll(".mbtn").forEach(b=>b.onclick=()=>brief(+b.dataset.i));
   const se=$("seeEnd");if(se)se.onclick=showEnding;
