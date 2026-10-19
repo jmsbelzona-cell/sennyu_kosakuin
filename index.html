@@ -1948,7 +1948,8 @@ function draw(){
 function show(html){overlay.innerHTML=html;overlay.hidden=false;const b=overlay.querySelector("button:not(:disabled)");if(b&&!coarse)b.focus()}
 function hideOv(){overlay.hidden=true;overlay.innerHTML=""}
 function rankOf(i){return best[i]!=null?RANKS[best[i].rank]:"未達成"}
-function unlocked(i){return i===0||best[i-1]!=null}
+// 最終作戦以外は最初から選べる。最終作戦は01〜09をすべて完了すると解放
+function unlocked(i){if(!LEVELS[i].boss)return true;for(let k=0;k<i;k++)if(best[k]==null)return false;return true}
 function title(){ambStop();
   mode="title";L=null;engineOff();tank=null;shells=[];booms=[];setObj();$("opcode").textContent="作戦 00";$("opname").textContent="待機中";
   $("timer").textContent="00:00.0";$("alertbar").style.width="0";A.ten=0;
@@ -1970,7 +1971,7 @@ function title(){ambStop();
     ${(()=>{const n=LEVELS.filter((l,i)=>best[i]!=null).length,nx=LEVELS.findIndex((l,i)=>best[i]==null);
       return `<div class="row" style="align-items:center"><span style="font-size:13px;color:var(--dim)">完了 ${n} / ${LEVELS.length}</span>${n>0&&nx>=0?`<button class="btn" id="cont" type="button">続きから　${LEVELS[nx].name}</button>`:""}${best[LEVELS.length-1]!=null?`<button class="btn ghost" id="seeEnd" type="button">エンディングを見る</button>`:""}</div>`})()}
     <div class="missions">${LEVELS.map((l,i)=>`<button class="mbtn" id="m${i}" type="button" ${unlocked(i)?"":"disabled"} data-i="${i}">
-      <span class="n">${String(i+1).padStart(2,"0")}</span><span class="t">${l.name}${l.boss?"　最終決戦":""}</span><span class="r">${best[i]!=null?"完了　"+rankOf(i):unlocked(i)?"未完了":"未解放"}</span></button>`).join("")}</div>
+      <span class="n">${String(i+1).padStart(2,"0")}</span><span class="t">${l.name}${l.boss?"　最終決戦":""}</span><span class="r">${best[i]!=null?"完了　"+rankOf(i):unlocked(i)?"未完了":"01〜09完了で解放"}</span></button>`).join("")}</div>
     <div class="legend">
       <span class="sw" style="background:#56613f;border:2px solid #d6d1b5;border-radius:50%"></span><span>工作員（自分）。拳銃と背嚢を持つ</span>
       <span class="sw" style="background:#743127;border:2px solid #c48a6a;border-radius:50%"></span><span>見張り。小銃を持ち、扇形の範囲が見えている。制服は作戦地ごとに違う</span>
@@ -1979,7 +1980,7 @@ function title(){ambStop();
       <span class="sw" style="background:#0a0d1c;border:1px dashed #8ca0ff"></span><span>暗がり。立ち止まれば、すぐそばの見張り以外には見つからない</span>
       <span class="sw" style="background:#3a3324;border:1px solid #5a4d33"></span><span>障害物（木箱・コンテナ・机・岩など）。視線を遮る</span>
     </div>
-    <p style="font-size:12px;color:var(--dim)">版　第3版（2026年10月19日）　<span id="saveLbl"></span>音楽は作戦ごとに変わります。右上の「音」で消せます。</p></div>`);
+    <p style="font-size:12px;color:var(--dim)">版　第4版（2026年10月19日）　<span id="saveLbl"></span>音楽は作戦ごとに変わります。右上の「音」で消せます。</p></div>`);
   syncSaveLbl();
   overlay.querySelectorAll(".mbtn").forEach(b=>b.onclick=()=>brief(+b.dataset.i));
   const se=$("seeEnd");if(se)se.onclick=showEnding;
@@ -2033,7 +2034,7 @@ function win(){ambStop();
   if(r===3&&kos>0)r=2;
   const prev=best[levelIdx];
   if(!prev||r>prev.rank||(r===prev.rank&&time<prev.time)){best[levelIdx]={rank:r,time};saveBest()}
-  const next=levelIdx+1<LEVELS.length;
+  const next=levelIdx+1<LEVELS.length&&unlocked(levelIdx+1);
   const words=r===3?"痕跡ひとつ残さなかった。潜入に気づいた者は誰もいない。":r===2?(kos>0?"見事な手際だった。ただし、倒れた見張りは朝には見つかるだろう。":"見事な手際だった。だが、まだ改善の余地がある。"):r===1?"任務は果たした。ただ、危ない場面もあった。":"脱出には成功したが、敵に存在を悟られた。";
   show(`<div class="card"><div class="eyebrow">${L.code}　任務完了</div><div class="big green">脱出成功</div>
     <div class="facts"><div><small>所要時間</small><b>${fmt(time)}</b></div><div><small>最大警戒</small><b>${Math.round(maxAlert*100)}%</b></div><div><small>倒した数</small><b>${kos}</b></div><div><small>評価</small><b class="rank">${RANKS[r]}</b></div></div>
